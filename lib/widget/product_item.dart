@@ -6,6 +6,7 @@ import 'package:prodcut_app/controller/product_controller.dart';
 import 'package:prodcut_app/model/product_model.dart';
 import 'package:prodcut_app/utils/app_decoration.dart';
 import 'package:prodcut_app/utils/theme.dart';
+import 'package:prodcut_app/view/ProductDetailsScreen.dart';
 
 Widget buildProductItem(BuildContext context, Product product) {
   final ProductController controller = Get.find<ProductController>();
@@ -39,32 +40,41 @@ Widget buildProductItem(BuildContext context, Product product) {
         children: <Widget>[
           Stack(
             children: [
-              ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(15.0),
-                  topRight: Radius.circular(15.0),
-                ),
-                child: CachedNetworkImage(
-                  imageUrl:
-                      isImageUrlValid(imageUrl) ? imageUrl : defaultImageUrl,
-                  height: Get.height * 0.3,
-                  width: double.infinity,
-                  fit: BoxFit.fill,
-                  placeholder: (context, url) => const Center(
-                    child: SpinKitCircle(
-                      color: Color(0xFF6D31ED),
-                      size: 50.0,
-                    ),
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              ProductDetailsScreen(product: product)));
+                },
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(15.0),
+                    topRight: Radius.circular(15.0),
                   ),
-                  errorWidget: (context, url, error) {
-                    print('Error loading image: $error');
-                    return Image.network(
-                      defaultImageUrl,
-                      height: 200,
-                      width: double.infinity,
-                      fit: BoxFit.fill,
-                    );
-                  },
+                  child: CachedNetworkImage(
+                    imageUrl:
+                        isImageUrlValid(imageUrl) ? imageUrl : defaultImageUrl,
+                    height: Get.height * 0.3,
+                    width: double.infinity,
+                    fit: BoxFit.fill,
+                    placeholder: (context, url) => const Center(
+                      child: SpinKitCircle(
+                        color: Color(0xFF6D31ED),
+                        size: 50.0,
+                      ),
+                    ),
+                    errorWidget: (context, url, error) {
+                      print('Error loading image: $error');
+                      return Image.network(
+                        defaultImageUrl,
+                        height: 200,
+                        width: double.infinity,
+                        fit: BoxFit.fill,
+                      );
+                    },
+                  ),
                 ),
               ),
               Positioned(

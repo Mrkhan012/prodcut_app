@@ -119,7 +119,7 @@ class ProductController extends GetxController {
         .map((product) => product.category?.name ?? 'Unknown')
         .toSet()
         .toList();
-    categories.insert(0, 'All'); // Add 'All' option to display all categories
+    categories.insert(0, 'All'); 
     return categories;
   }
 }
