@@ -30,6 +30,11 @@ class ProductController extends GetxController {
   ];
   var currentHintIndex = 0.obs;
   Timer? _timer;
+  void addProduct(Product product) {
+    allProducts.add(product);
+    applyFilters(); // Reapply filters after adding a new product
+    showSnackbar('${product.title} has been added.');
+  }
 
   @override
   void onInit() {
@@ -39,7 +44,7 @@ class ProductController extends GetxController {
   }
 
   void startHintTextRotation() {
-    _timer = Timer.periodic(Duration(seconds: 3), (Timer timer) {
+    _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
       currentHintIndex.value = (currentHintIndex.value + 1) % hintTexts.length;
     });
   }
@@ -103,7 +108,9 @@ class ProductController extends GetxController {
           product.price! >= minPrice.value &&
           product.price! <= maxPrice.value;
       final matchesSearch = searchQuery.value.isEmpty ||
-          product.title!.toLowerCase().contains(searchQuery.value.toLowerCase());
+          product.title!
+              .toLowerCase()
+              .contains(searchQuery.value.toLowerCase());
 
       return matchesCategory && matchesPrice && matchesSearch;
     }));
@@ -119,7 +126,7 @@ class ProductController extends GetxController {
         .map((product) => product.category?.name ?? 'Unknown')
         .toSet()
         .toList();
-    categories.insert(0, 'All'); 
+    categories.insert(0, 'All');
     return categories;
   }
 }

@@ -6,8 +6,8 @@ import 'package:prodcut_app/model/product_model.dart';
 import 'package:prodcut_app/utils/theme.dart';
 import 'package:prodcut_app/widget/filter_widget.dart';
 import 'package:prodcut_app/widget/product_item.dart';
-
 import '../utils/color.dart';
+
 class ProductPage extends StatelessWidget {
   ProductPage({super.key});
 
@@ -59,6 +59,29 @@ class ProductPage extends StatelessWidget {
         ),
       ),
       body: Obx(() {
+        if (controller.displayedProducts.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/images/product.jpg', // Make sure this image exists in your assets
+                  width: 300,
+                  height: 300,
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'No products found',
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
         return NotificationListener<ScrollNotification>(
           onNotification: (scrollInfo) {
             if (scrollInfo is ScrollUpdateNotification &&
