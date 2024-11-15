@@ -4,6 +4,7 @@ import 'package:prodcut_app/controller/product_controller.dart';
 import 'package:prodcut_app/model/product_model.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:prodcut_app/utils/color.dart';
+import 'package:prodcut_app/view/conforamtion_screen.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
   final Product product;
@@ -124,7 +125,7 @@ class ProductDetailsScreen extends StatelessWidget {
                 title: const Text('Cash on Delivery'),
                 onTap: () {
                   // Handle Cash on Delivery option
-                  Navigator.pop(context);
+                  Get.to(() => const ConfirmationScreen());
                 },
               ),
               ListTile(

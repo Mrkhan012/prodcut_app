@@ -17,12 +17,10 @@ class ProductController extends GetxController {
   final int limit = 30;
   var searchQuery = "".obs;
 
-  // Filters
   var selectedCategory = Rx<String?>(null);
   var minPrice = 0.0.obs;
   var maxPrice = 1000.0.obs;
 
-  // Hint text management
   final List<String> hintTexts = [
     'Search for product...',
     'Search for category...',
@@ -30,11 +28,6 @@ class ProductController extends GetxController {
   ];
   var currentHintIndex = 0.obs;
   Timer? _timer;
-  void addProduct(Product product) {
-    allProducts.add(product);
-    applyFilters(); // Reapply filters after adding a new product
-    showSnackbar('${product.title} has been added.');
-  }
 
   @override
   void onInit() {
@@ -43,16 +36,57 @@ class ProductController extends GetxController {
     startHintTextRotation();
   }
 
+  @override
+  void onClose() {
+    _timer?.cancel();
+    super.onClose();
+  }
+
   void startHintTextRotation() {
     _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
       currentHintIndex.value = (currentHintIndex.value + 1) % hintTexts.length;
     });
   }
 
-  @override
-  void onClose() {
-    _timer?.cancel();
-    super.onClose();
+  void addProduct(Product product) {
+    allProducts.add(product);
+    applyFilters();
+    showSnackbar('${product.title} has been added.');
+  }
+
+  void updateProduct(int id, {required String title, required int price, String? description}) {
+  final index = allProducts.indexWhere((product) => product.id == id);
+  if (index != -1) {
+    allProducts[index] = allProducts[index].copyWith(
+      title: title,
+      price: price,
+      description: description,
+    );
+    applyFilters();
+    showSnackbar('$title has been updated.');
+  }
+}
+
+
+  Future<void> loadMoreProducts() async {
+    if (isLoading.value || !hasMore.value) return;
+
+    isLoading.value = true;
+
+    try {
+      final List<Product> products = await _productService.fetchProducts(page.value, limit);
+      if (products.isEmpty) {
+        hasMore.value = false;
+      } else {
+        allProducts.addAll(products);
+        applyFilters();
+        page.value++;
+      }
+    } catch (e) {
+      print('Error loading products: $e');
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   void toggleFavorite(Product product) {
@@ -75,31 +109,8 @@ class ProductController extends GetxController {
     );
   }
 
-  Future<void> loadMoreProducts() async {
-    if (isLoading.value || !hasMore.value) return;
-
-    isLoading.value = true;
-
-    try {
-      final List<Product> products =
-          await _productService.fetchProducts(page.value, limit);
-      if (products.isEmpty) {
-        hasMore.value = false;
-      } else {
-        allProducts.addAll(products);
-        applyFilters();
-        page.value++;
-      }
-    } catch (e) {
-      print('Error loading products: $e');
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
   void applyFilters() {
     displayedProducts.clear();
-
     displayedProducts.addAll(allProducts.where((product) {
       final matchesCategory = selectedCategory.value == null ||
           selectedCategory.value == 'All' ||
@@ -108,9 +119,7 @@ class ProductController extends GetxController {
           product.price! >= minPrice.value &&
           product.price! <= maxPrice.value;
       final matchesSearch = searchQuery.value.isEmpty ||
-          product.title!
-              .toLowerCase()
-              .contains(searchQuery.value.toLowerCase());
+          product.title!.toLowerCase().contains(searchQuery.value.toLowerCase());
 
       return matchesCategory && matchesPrice && matchesSearch;
     }));

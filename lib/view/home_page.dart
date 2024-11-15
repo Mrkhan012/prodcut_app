@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:prodcut_app/controller/product_controller.dart';
 import 'package:prodcut_app/model/product_model.dart';
 import 'package:prodcut_app/utils/theme.dart';
+import 'package:prodcut_app/view/admin_panel_screen.dart';
+import 'package:prodcut_app/view/card_screen.dart';
 import 'package:prodcut_app/widget/filter_widget.dart';
 import 'package:prodcut_app/widget/product_item.dart';
 import '../utils/color.dart';
@@ -33,6 +35,18 @@ class ProductPage extends StatelessWidget {
             ),
             onPressed: () => openFilterSheet(context, Product()),
           ),
+          IconButton(
+              icon: const Icon(
+                Icons.shopping_cart,
+                color: kAppBrightWhiteColor,
+              ),
+              onPressed: () => Get.to(() => CartScreen())),
+          IconButton(
+              icon: const Icon(
+                Icons.ad_units,
+                color: kAppBrightWhiteColor,
+              ),
+              onPressed: () => Get.to(() => AddEditProductScreen()))
         ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(70.0),

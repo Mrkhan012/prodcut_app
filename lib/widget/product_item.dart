@@ -2,14 +2,17 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
+import 'package:prodcut_app/controller/card_controller.dart';
 import 'package:prodcut_app/controller/product_controller.dart';
 import 'package:prodcut_app/model/product_model.dart';
 import 'package:prodcut_app/utils/app_decoration.dart';
+import 'package:prodcut_app/utils/color.dart';
 import 'package:prodcut_app/utils/theme.dart';
 import 'package:prodcut_app/view/ProductDetailsScreen.dart';
 
 Widget buildProductItem(BuildContext context, Product product) {
   final ProductController controller = Get.find<ProductController>();
+  final CartController cartController = Get.put(CartController());
 
   // Default image URL
   const String defaultImageUrl =
@@ -83,12 +86,18 @@ Widget buildProductItem(BuildContext context, Product product) {
                 child: Obx(() {
                   final isFavorite =
                       controller.favoriteProducts.contains(product);
-                  return IconButton(
-                    icon: Icon(
-                      isFavorite ? Icons.favorite : Icons.favorite_border,
-                      color: isFavorite ? Colors.red : Colors.white,
+                  return CircleAvatar(
+                    radius: 25,
+                    backgroundColor: kDefaultBlueColor,
+                    child: IconButton(
+                      icon: Icon(
+                        isFavorite
+                            ? Icons.shopping_cart_checkout
+                            : Icons.shopping_cart,
+                        color: isFavorite ? Colors.red : Colors.white,
+                      ),
+                      onPressed: () => cartController.addToCart(product),
                     ),
-                    onPressed: () => controller.toggleFavorite(product),
                   );
                 }),
               ),
